@@ -1,0 +1,142 @@
+<div style="display:flex;align-items:center;gap:15px;
+  background:#1a0000;
+  padding:12px 18px;
+  border-radius:10px;
+  font-family:Arial, sans-serif;
+">
+
+  <!-- Analog Clock -->
+  <div id="analog" style="
+    width:60px;
+    height:60px;
+    border:2px solid #ffffff;
+    border-radius:50%;
+    position:relative;
+    box-sizing:border-box;
+  ">
+    <div id="hour" style="
+      position:absolute;
+      width:3px;
+      height:18px;
+      background:#ffffff;
+      top:12px;
+      left:50%;
+      transform-origin:bottom;
+      transform:translateX(-50%);
+      border-radius:2px;
+    "></div>
+
+    <div id="minute" style="
+      position:absolute;
+      width:2px;
+      height:24px;
+      background:#ff1a1a;
+      top:6px;
+      left:50%;
+      transform-origin:bottom;
+      transform:translateX(-50%);
+      border-radius:2px;
+    "></div>
+
+    <div id="second" style="
+      position:absolute;
+      width:1px;
+      height:26px;
+      background:#00e1ff;
+      top:4px;
+      left:50%;
+      transform-origin:bottom;
+      transform:translateX(-50%);
+    "></div>
+
+    <div style="
+      position:absolute;
+      width:6px;
+      height:6px;
+      background:#ffffff;
+      border-radius:50%;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+    "></div>
+  </div>
+
+  <!-- Digital IST -->
+  <div>
+    <div style="
+      color:#FFFFFF;
+      font-size:14px;
+      margin-bottom:6px;
+      letter-spacing:1px;
+    ">
+      Indian Standard Time
+    </div>
+
+    <div id="ist-time" style="
+      color:#ff1a1a;
+      font-size:26px;
+      font-weight:bold;
+    ">
+      --:--:--
+    </div>
+
+    <div id="ist-date" style="
+      color:#8b0000;
+      font-size:18px;
+      margin-top:4px;
+    ">
+      ---
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function getIST() {
+    return new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    );
+  }
+
+  function updateIST() {
+    const ist = getIST();
+
+    // Digital Time
+    const time = ist.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    });
+
+    // Date: Tue, 03 Feb 2026
+    const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    const dateText =
+      `${days[ist.getDay()]}, ` +
+      `${String(ist.getDate()).padStart(2,"0")} ` +
+      `${months[ist.getMonth()]} ` +
+      ist.getFullYear();
+
+    document.getElementById("ist-time").innerHTML = time;
+    document.getElementById("ist-date").innerHTML = dateText;
+
+    // Analog Clock
+    const seconds = ist.getSeconds();
+    const minutes = ist.getMinutes();
+    const hours = ist.getHours();
+
+    document.getElementById("second").style.transform =
+      `translateX(-50%) rotate(${seconds * 6}deg)`;
+
+    document.getElementById("minute").style.transform =
+      `translateX(-50%) rotate(${minutes * 6 + seconds * 0.1}deg)`;
+
+    document.getElementById("hour").style.transform =
+      `translateX(-50%) rotate(${(hours % 12) * 30 + minutes * 0.5}deg)`;
+  }
+
+  updateIST();
+  setInterval(updateIST, 1000);
+</script>
